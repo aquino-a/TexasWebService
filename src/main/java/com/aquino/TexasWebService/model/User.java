@@ -11,7 +11,10 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -21,59 +24,79 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 public class User {
-	@Id
-	@GeneratedValue
-	private Long id;
-	private String username;
-	private String password;
-        private int money;
-        private String displayName;
-        private boolean enabled;
-        
-	@OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-	private List<Role> roles;
 
-	User() {
-	}
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String username;
+    
+    private String password;
+    private int money;
+    private String displayName;
+    
+    private String email;
+    private boolean enabled;
 
-	public User(String username, String password, List<Role> roles) {
-		this.username = username;
-		this.password = password;
-		this.roles = roles;
-                this.money = 5000;
-                this.enabled = true;
-	}
+    @OneToOne(optional = true)
+    @JoinColumn(name = "token_id", unique = true, updatable = true)
+    private VerificationToken token;
 
-	public String getUsername() {
-		return username;
-	}
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Role> roles;
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    User() {
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public User(String username, String password, String email, List<Role> roles, VerificationToken token) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+        this.money = 5000;
+        this.token = token;
+        this.email = email;
+        this.enabled = false;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public List<Role> getRoles() {
-		return roles;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-        /**
-         * @return the id
-         */
-        public Long getId() {
-            return id;
-        }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
 
     /**
      * @return the money
@@ -116,6 +139,15 @@ public class User {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-        
-        
+
+    public VerificationToken getToken() {
+        return token;
+    }
+
+    public void setToken(VerificationToken token) {
+        this.token = token;
+    }
+    
+    
+
 }

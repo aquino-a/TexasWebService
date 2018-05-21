@@ -46,7 +46,7 @@ public class GamesController {
         try {
             user = userService.getByUsername(principal.getName());
         } catch (UsernameNotFoundException e) {
-            user = new User(principal.getName(), null, null);
+            user = new User(principal.getName(), null, null,null,null);
             user.setEnabled(false);
             userService.save(user);
         }
@@ -62,21 +62,5 @@ public class GamesController {
         return game.getGameId();
     }
     
-    @PostMapping("/users/new")
-    public User add(@Valid @RequestBody User user) {
-        return userService.save(user);
-    }
-    
-    @DeleteMapping("/users/{username}")
-    public ResponseEntity<?> delete(@PathVariable String username) {
-        User user;
-        try {
-            user = userService.getByUsername(username);
-        } catch (UsernameNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-        userService.delete(user);
-        return ResponseEntity.ok().build();
-    }
      
 }

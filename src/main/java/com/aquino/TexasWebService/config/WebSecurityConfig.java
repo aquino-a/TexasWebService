@@ -87,12 +87,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity security) throws Exception {
         security
-                .antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**").permitAll().anyRequest()
+                .antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**","/users/new","/confirm/**").permitAll().anyRequest()
                 .authenticated()
                 .and().exceptionHandling()
                 .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/")).and().logout()
-                .logoutSuccessUrl("/").permitAll().and().csrf()
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
+                .logoutSuccessUrl("/").permitAll().and().csrf().disable()
+//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class);
     }
     
