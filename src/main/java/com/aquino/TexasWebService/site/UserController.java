@@ -8,7 +8,13 @@ package com.aquino.TexasWebService.site;
 import com.aquino.TexasWebService.model.User;
 import com.aquino.TexasWebService.service.TexasTokenService;
 import com.aquino.TexasWebService.service.UserService;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
@@ -29,14 +35,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/users")
 public class UserController {
     
+    @Inject ServletContext servletContext;
     @Inject UserService userService;
     @Inject TexasTokenService tokenService;
     
     @PostMapping("/new")
-    public User add(@Valid @RequestBody User user, HttpRequest request) {
-        user = userService.save(user);
-        tokenService.addAndSendVerification(user,request.getURI());
-        return userService.save(user);
+    public User add(@Valid @RequestBody User user){
+        user = userService.save(
+                userService.prepareUser(user));
+        try {
+            user = tokenService.addAndSendVerification(user);
+            return userService.save(user);
+        } catch (Exception ex) {
+            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
     
     //securethis
@@ -51,5 +64,6 @@ public class UserController {
         userService.delete(user);
         return ResponseEntity.ok().build();
     }
+    
     
 }

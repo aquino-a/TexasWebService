@@ -7,9 +7,11 @@ package com.aquino.TexasWebService.service;
 
 import com.aquino.TexasWebService.model.Role;
 import com.aquino.TexasWebService.model.User;
+import com.aquino.TexasWebService.repository.RoleRepository;
 import com.aquino.TexasWebService.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import javax.inject.Inject;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +26,7 @@ public class UserService {
     
     @Inject UserRepository userRepository;
     @Inject PasswordEncoder passwordEncoder;
+    @Inject RoleRepository roleRepository;
     
     public User getByUsername(String username) throws UsernameNotFoundException{
          User user = userRepository.findByUsername(username);
@@ -33,7 +36,7 @@ public class UserService {
     }
     
     public User save(User user) {
-        userRepository.save(prepareUser(user));
+        userRepository.save(user);
         return user;
     }
     
@@ -41,12 +44,19 @@ public class UserService {
         userRepository.delete(user);
     }
     
-    private User prepareUser(User user) {
+    public User prepareUser(User user) {
         if(user.getPassword() != null)
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setMoney(5000);
-        user.setRoles(Arrays.asList(new Role("USER"), new Role("ACTUATOR")));
+        user.setRoles(basicRoles());
         return user;
+    }
+
+    private List<Role> basicRoles() {
+        List<Role> list = new ArrayList<>();
+        list.add(roleRepository.findByName("USER"));
+        list.add(roleRepository.findByName("ACTUATOR"));
+        return list;
     }
     
 }

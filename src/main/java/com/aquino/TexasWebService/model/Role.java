@@ -5,9 +5,12 @@
  */
 package com.aquino.TexasWebService.model;
 
+import java.util.List;
+import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
 /**
  *
@@ -15,24 +18,48 @@ import javax.persistence.Id;
  */
 @Entity
 public class Role {
-	@Id
-	@GeneratedValue
-	private Long id;
 
-	Role() {
-	}
+    @Id
+    @GeneratedValue
+    private Long id;
 
-	public Role(String name) {
-		this.name = name;
-	}
+    Role() {
+    }
 
-	String name;
+    public Role(String name) {
+        this.name = name;
 
-	public String getName() {
-		return name;
-	}
+    }
+    String name;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    
+    @ManyToMany(mappedBy = "roles")
+    private List<User> users;
+    
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
+    
+    
+
 }

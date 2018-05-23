@@ -6,17 +6,17 @@
 package com.aquino.TexasWebService.model;
 
 import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -38,10 +38,16 @@ public class User {
     private boolean enabled;
 
     @OneToOne(optional = true)
-    @JoinColumn(name = "token_id", unique = true, updatable = true)
+    @JoinColumn(name = "token_id", updatable = true)
     private VerificationToken token;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    private List<Role> roles;
+    
+    @ManyToMany(cascade ={CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name = "user_role", 
+			joinColumns = { @JoinColumn(name = "user_id", nullable = false) }, 
+			inverseJoinColumns = { @JoinColumn(name = "role_id", nullable = false) })
     private List<Role> roles;
 
     User() {

@@ -5,6 +5,7 @@
  */
 package com.aquino.TexasWebService.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -32,6 +33,7 @@ public class VerificationToken implements Serializable {
     @Column(name="token_value")
     private String tokenValue;
     
+    @JsonIgnore
     @OneToOne(optional=false, mappedBy="token")
     private User user;
     
