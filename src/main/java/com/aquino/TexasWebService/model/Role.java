@@ -5,6 +5,7 @@
  */
 package com.aquino.TexasWebService.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.Entity;
@@ -32,7 +33,7 @@ public class Role {
     }
     String name;
 
-    
+    @JsonIgnore
     @ManyToMany(mappedBy = "roles")
     private List<User> users;
     
