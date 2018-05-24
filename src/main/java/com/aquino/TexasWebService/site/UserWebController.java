@@ -37,7 +37,7 @@ public class UserWebController {
                 model.addAttribute("expired", token.getExpiry().toString());
                 return "confirm";
             }
-            if(token.isVerified()) {
+            if(!token.isVerified()) {
                 model.addAttribute("verified", true);
                 return "confirm";
             }
