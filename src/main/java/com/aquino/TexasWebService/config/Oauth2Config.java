@@ -62,7 +62,7 @@ public class Oauth2Config extends AuthorizationServerConfigurerAdapter {
                                 .resourceIds("oauth2-resource").secret("{noop}secret")
                         .and()
                                 .withClient("acme")
-                                .authorizedGrantTypes("authorization_code")
+                                .authorizedGrantTypes("authorization_code","password")
                                 .secret("{noop}secret")
                                 .scopes("read","write")
                                 .autoApprove(".*");

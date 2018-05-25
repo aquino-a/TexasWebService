@@ -44,7 +44,7 @@ public class User {
 //    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 //    private List<Role> roles;
     
-    @ManyToMany(cascade ={CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(cascade ={CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},fetch=FetchType.EAGER)
     @JoinTable(name = "user_role", 
 			joinColumns = { @JoinColumn(name = "user_id", nullable = false) }, 
 			inverseJoinColumns = { @JoinColumn(name = "role_id", nullable = false) })
