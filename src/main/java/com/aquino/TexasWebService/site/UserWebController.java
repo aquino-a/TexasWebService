@@ -33,14 +33,15 @@ public class UserWebController {
     public String confirmUser(@PathVariable String tokenId, Model model) {
         VerificationToken token = tokenService.findByTokenValue(tokenId);
         if(token != null) {
-            if(token.getExpiry().isBefore(LocalDateTime.now())) {
-                model.addAttribute("expired", token.getExpiry().toString());
-                return "confirm";
-            }
             if(token.isVerified()) {
                 model.addAttribute("verified", true);
                 return "confirm";
             }
+            if(token.getExpiry().isBefore(LocalDateTime.now())) {
+                model.addAttribute("expired", token.getExpiry().toString());
+                return "confirm";
+            }
+            
             
             //verify user
             token.setVerified(true);
