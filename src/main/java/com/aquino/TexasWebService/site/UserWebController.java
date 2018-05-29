@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
@@ -62,7 +63,7 @@ public class UserWebController {
         VerificationToken token = tokenService.findByTokenValue(tokenId);
         if(token != null) {
             if(token.isVerified()) {
-                model.addAttribute("reset", true);
+                model.addAttribute("already_reset", true);
                 return "reset";
             }
             if(token.getExpiry().isBefore(LocalDateTime.now())) {
@@ -79,7 +80,7 @@ public class UserWebController {
     }
     
     @PostMapping("/reset/{tokenId}")
-    public String resetPassword(@PathVariable String tokenId, Model model) {
+    public String resetPassword(@PathVariable String tokenId, @RequestParam String[] password, Model model) {
         VerificationToken token = tokenService.findByTokenValue(tokenId);
         if(token != null) {
             if(token.isVerified()) {
@@ -92,14 +93,13 @@ public class UserWebController {
             }
             
             //check password
-            String[] passwords = (String[]) model.asMap().get("password");
-            if(!passwords[0].equals(passwords[1])) {
+            if(!password[0].equals(password[1])) {
                 model.addAttribute("matching", false);
                 return "reset";
             }
                 
                     
-            userService.changePassword(token.getUser(),passwords[0]);
+            userService.changePassword(token.getUser(),password[0]);
             
             //disable token
             token.setVerified(true);
