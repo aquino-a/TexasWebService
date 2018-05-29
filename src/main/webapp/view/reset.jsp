@@ -18,15 +18,15 @@
     </head>
     <body>
         <c:if test="${token != null}">
-            <form:form method="post" action="/reset/<c:out value='${token}' />" >
+            <form method="post" action="/reset/<c:out value='${token}' />" >
                 <label for="password">New password:</label>
-                <form:input id="password" type="password" name="password" />
+                <input id="password" type="password" name="password" />
                 <br/>
 
                 <label for="rePassword">Re-type password:</label>
-                <form:input id="rePassword" type="password" name="password" />
+                <input id="rePassword" type="password" name="password" />
                 <input type="submit" value="Submit" />
-            </form:form>
+            <form>
         </c:if>
     </body>
 </html>
