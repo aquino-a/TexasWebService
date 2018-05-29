@@ -26,7 +26,7 @@ public class TexasTokenService {
     @Inject TokenRepository tokenRepository;
     
     public User addAndSendVerification(User user) throws UnknownHostException {
-        VerificationToken token = new VerificationToken(user);
+        VerificationToken token = new VerificationToken(user,VerificationToken.Type.VERIFICATION);
         token = tokenRepository.save(token);
         user.setToken(token);
         //String verficationLink = servletContext.getContextPath() + "/confirm/" +user.getToken().getTokenValue();
@@ -39,6 +39,22 @@ public class TexasTokenService {
         sb.append("/confirm/");
         sb.append(user.getToken().getTokenValue());
         emailService.sendSimpleMessage(user.getEmail(), "Texas Hold'em Account Verification: " + user.getUsername(), sb.toString());
+        return user;
+    }
+    
+    public User createAndSendReset(User user) throws UnknownHostException {
+        VerificationToken token = new VerificationToken(user,VerificationToken.Type.RESET);
+        token = tokenRepository.save(token);
+        user.setToken(token);
+        StringBuilder sb = new StringBuilder();
+        sb.append("Click the link below to reset password for: ");
+        sb.append(user.getUsername());
+        sb.append("\n");
+        sb.append("http://");
+        sb.append(InetAddress.getLocalHost().getHostAddress());
+        sb.append("/reset/");
+        sb.append(user.getToken().getTokenValue());
+        emailService.sendSimpleMessage(user.getEmail(), "Texas Hold'em Password Reset: " + user.getUsername(), sb.toString());
         return user;
     }
 

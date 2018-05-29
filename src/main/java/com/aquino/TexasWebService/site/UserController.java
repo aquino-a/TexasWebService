@@ -52,7 +52,21 @@ public class UserController {
         }
     }
     
-    //securethis
+    @PostMapping("/reset/{email}")
+    public ResponseEntity<?> resetPassword(@PathVariable String email) {
+        try {
+            User user = userService.findByEmail(email);
+            user = tokenService.createAndSendReset(user);
+            userService.save(user);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    
+    
+    //TODO securethis
     @DeleteMapping("/{username}")
     public ResponseEntity<?> delete(@PathVariable String username) {
         User user;

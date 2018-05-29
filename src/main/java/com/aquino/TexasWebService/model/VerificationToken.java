@@ -37,18 +37,25 @@ public class VerificationToken implements Serializable {
     @OneToOne(optional=false, mappedBy="token")
     private User user;
     
+    private Type type;
+    
     private boolean verified;
     
     private LocalDateTime expiry;
 
-    public VerificationToken(User user) {
+    public VerificationToken(User user, Type type) {
         this.user = user;
         this.tokenValue = UUID.randomUUID().toString();
         expiry = LocalDateTime.now().plusHours(24);
         this.verified = false;
+        this.type = type;
     }
 
     public VerificationToken() {}
+    
+    public enum Type {
+        VERIFICATION,RESET
+    }
 
     public long getId() {
         return id;

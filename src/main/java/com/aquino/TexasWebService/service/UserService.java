@@ -35,6 +35,13 @@ public class UserService {
          return user;
     }
     
+    public User findByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        if(user == null)
+            throw new UsernameNotFoundException(email);
+        return user;
+    }
+    
     public User save(User user) {
         userRepository.save(user);
         return user;
@@ -49,6 +56,12 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setMoney(5000);
         user.setRoles(basicRoles());
+        return user;
+    }
+    
+    public User changePassword(User user, String password) {
+        user.setPassword(passwordEncoder.encode(password));
+        save(user);
         return user;
     }
 

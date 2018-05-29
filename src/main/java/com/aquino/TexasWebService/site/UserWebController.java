@@ -12,10 +12,12 @@ import com.aquino.TexasWebService.service.TexasTokenService;
 import com.aquino.TexasWebService.service.UserService;
 import java.time.LocalDateTime;
 import javax.inject.Inject;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -23,13 +25,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author b005
  */
 @Controller
-@RequestMapping("/confirm")
 public class UserWebController {
     
     @Inject TexasTokenService tokenService;
     @Inject UserService userService;
     
-    @GetMapping("/{tokenId}")
+    @GetMapping("/confirm/{tokenId}")
     public String confirmUser(@PathVariable String tokenId, Model model) {
         VerificationToken token = tokenService.findByTokenValue(tokenId);
         if(token != null) {
@@ -55,5 +56,65 @@ public class UserWebController {
         model.addAttribute("ok", "ok");
         return "confirm";
     }
+    
+    @GetMapping("/reset/{tokenId}")
+    public String resetPasswordForm(@PathVariable String tokenId, Model model) {
+        VerificationToken token = tokenService.findByTokenValue(tokenId);
+        if(token != null) {
+            if(token.isVerified()) {
+                model.addAttribute("reset", true);
+                return "reset";
+            }
+            if(token.getExpiry().isBefore(LocalDateTime.now())) {
+                model.addAttribute("expired", token.getExpiry().toString());
+                return "reset";
+            }
+            
+            //return static reset page
+            model.addAttribute("token", token.getTokenValue());
+            return "reset";
+        }
+        model.addAttribute("ok", "ok");
+        return "reset";
+    }
+    
+    @PostMapping("/reset/{tokenId}")
+    public String resetPassword(@PathVariable String tokenId, Model model) {
+        VerificationToken token = tokenService.findByTokenValue(tokenId);
+        if(token != null) {
+            if(token.isVerified()) {
+                model.addAttribute("already_reset", true);
+                return "reset";
+            }
+            if(token.getExpiry().isBefore(LocalDateTime.now())) {
+                model.addAttribute("expired", token.getExpiry().toString());
+                return "reset";
+            }
+            
+            //check password
+            String[] passwords = (String[]) model.asMap().get("password");
+            if(!passwords[0].equals(passwords[1])) {
+                model.addAttribute("matching", false);
+                return "reset";
+            }
+                
+                    
+            userService.changePassword(token.getUser(),passwords[0]);
+            
+            //disable token
+            token.setVerified(true);
+            tokenService.save(token);
+            
+            //return static reset page
+            model.addAttribute("just_reset", true);
+            return "reset";
+        }
+        model.addAttribute("ok", "ok");
+        return "reset";
+        
+    }
+    
+    
+    
     
 }
