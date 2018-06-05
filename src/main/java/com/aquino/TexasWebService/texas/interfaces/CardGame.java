@@ -18,7 +18,7 @@ public interface CardGame {
     User newUser(int money);
     void endRound();
     User getTurn();
-    User removeUser(int userId);
+    User removeUser(long userId);
     User[] getUsers();
     Map<Long,User> getUserList();
     

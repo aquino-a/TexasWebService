@@ -7,9 +7,11 @@ package com.aquino.TexasWebService.site;
 
 import com.aquino.TexasWebService.model.GameState;
 import com.aquino.TexasWebService.model.Move;
+import com.aquino.TexasWebService.model.User;
+import com.aquino.TexasWebService.service.UserService;
 import com.aquino.TexasWebService.texas.TexasGame;
 import com.aquino.TexasWebService.texas.TexasUser;
-import com.aquino.TexasWebService.texas.interfaces.User;
+import java.security.Principal;
 import javax.inject.Inject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,20 +31,27 @@ import org.springframework.web.bind.annotation.RestController;
 public class GameController {
     
     @Inject GameMap gameMap;
+    @Inject UserService userService;
     
-    @PostMapping(params={"action=join"})
-    public String join(@PathVariable long id) {
-        User user = TexasUser.getInstance(5000);
-        gameMap.getGame(id).addUser(user);
-        long userId = user.getUserId();
-        return "Your userId for this game is: " + userId;
+    @PostMapping("/join")
+    public String join(@PathVariable long id, Principal principal) {
+        User user = userService.getByUsername(principal.getName());
+        gameMap.getGame(id).addUser(
+                TexasUser.getInstanceFromKnownUser(
+                        user.getMoney(),user.getId(),user.getUsername()));
+        
+        return "Your userId for this game is: " + user.getId();
     }
     
-    @PostMapping(params={"action=leave","userId"})
-    public int leave(@PathVariable int id, @RequestParam("userId") int userId ) {
-//        TexasGame game = gameMap.getGame(id);
-//        User user = game.removeUser(userId);
-        return gameMap.getGame(id).removeUser(userId).getMoney();
+    @PostMapping("/leave")
+    public int leave(@PathVariable int id, Principal principal ) {
+        User user = userService.getByUsername(principal.getName());
+        com.aquino.TexasWebService.texas.interfaces.User texasUser = 
+                gameMap.getGame(id).removeUser(user.getId());
+        user.setMoney(texasUser.getMoney());
+        userService.save(user);
+
+        return user.getMoney();
     }
     
     @GetMapping(params={"userId"})

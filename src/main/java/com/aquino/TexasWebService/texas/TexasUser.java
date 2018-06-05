@@ -22,6 +22,7 @@ public class TexasUser implements User {
     public int betTotal;
     private int result, money,handStrength = -1, roundBet;
     private long userId;
+    private String name;
     private Hand hand;
     private boolean hasEnoughMoney, playing;
     private static long userIdGenerator;
@@ -38,8 +39,10 @@ public class TexasUser implements User {
         return new TexasUser(money, generateUserId());
     }
     
-    public static User getInstanceFromKnownUser(int money, long userId) {
-        return new TexasUser(money, userId);
+    public static User getInstanceFromKnownUser(int money, long userId, String name) {
+        TexasUser user = new TexasUser(money, userId);
+        user.setName(name);
+        return user;
     }
     
     @Override
@@ -177,4 +180,14 @@ public class TexasUser implements User {
     public TexasHand getHand() {
         return (TexasHand) hand;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    
 }

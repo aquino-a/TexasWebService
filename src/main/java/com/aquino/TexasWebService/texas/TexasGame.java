@@ -65,7 +65,7 @@ public class TexasGame implements CardGame {
     }
     
     @Override
-    public User removeUser(int userId) {
+    public User removeUser(long userId) {
         foldUser(userList.get(userId));
         return userList.remove(userId);
     }
