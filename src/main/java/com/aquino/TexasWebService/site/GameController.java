@@ -59,7 +59,7 @@ public class GameController {
         return GameState.getGameState(gameMap.getGame(id), userId);
     }
     
-    @PostMapping(consumes = {"application/JSON"}, produces = {"application/JSON"})
+    @PostMapping("/move")
     public GameState receiveMove(@RequestBody Move move, @PathVariable int id) {
         TexasGame game = gameMap.getGame(id);
         processMove(game, move);
