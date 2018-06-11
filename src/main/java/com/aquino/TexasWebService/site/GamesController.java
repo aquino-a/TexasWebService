@@ -41,7 +41,7 @@ public class GamesController {
     }
     
     @RequestMapping("/me")
-    public Map<String, String> user(Principal principal) {
+    public User user(Principal principal) {
         User user = null;
         try {
             user = userService.getByUsername(principal.getName());
@@ -50,9 +50,7 @@ public class GamesController {
             user.setEnabled(false);
             userService.save(user);
         }
-        Map<String, String> map = new LinkedHashMap<>();
-        map.put("name", principal.getName());
-        return map;
+        return user;
     }
     
     @PostMapping

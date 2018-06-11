@@ -5,6 +5,7 @@
  */
 package com.aquino.TexasWebService.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -30,13 +31,16 @@ public class User {
     private Long id;
     private String username;
     
+    @JsonIgnore
     private String password;
     private int money;
     private String displayName;
     
     private String email;
+    @JsonIgnore
     private boolean enabled;
-
+    
+    @JsonIgnore
     @OneToOne(optional = true)
     @JoinColumn(name = "token_id", updatable = true)
     private VerificationToken token;
@@ -44,6 +48,7 @@ public class User {
 //    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 //    private List<Role> roles;
     
+    @JsonIgnore
     @ManyToMany(cascade ={CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},fetch=FetchType.EAGER)
     @JoinTable(name = "user_role", 
 			joinColumns = { @JoinColumn(name = "user_id", nullable = false) }, 
