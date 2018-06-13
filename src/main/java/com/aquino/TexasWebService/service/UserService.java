@@ -42,6 +42,13 @@ public class UserService {
         return user;
     }
     
+    public User findById(long id) {
+        User user = userRepository.findById(id).get();
+        if(user == null)
+            throw new UsernameNotFoundException(String.valueOf(id));
+        return user;
+    }
+    
     public User save(User user) {
         userRepository.save(user);
         return user;

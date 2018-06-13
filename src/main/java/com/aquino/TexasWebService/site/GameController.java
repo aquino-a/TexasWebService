@@ -54,16 +54,28 @@ public class GameController {
         return user.getMoney();
     }
     
-    @GetMapping(params={"userId"})
-    public GameState getState(@PathVariable int id, @RequestParam int userId) {
-        return GameState.getGameState(gameMap.getGame(id), userId);
+    @GetMapping()
+    public GameState getState(@PathVariable int id, Principal principal) {
+        User user = userService.getByUsername(principal.getName());
+        TexasGame game = gameMap.getGame(id);
+        return GameState.getGameState(
+                game, user.getId(),realUsers((TexasUser[]) game.getRoomUsers()));
+    }
+    
+    private User[] realUsers(TexasUser[] users) {
+        User[] actualUsers = new User[users.length];
+        for (int i = 0; i < users.length; i++) {
+            actualUsers[i] = userService.findById(users[i].getUserId());
+        }
+        return actualUsers;
     }
     
     @PostMapping("/move")
     public GameState receiveMove(@RequestBody Move move, @PathVariable int id) {
         TexasGame game = gameMap.getGame(id);
         processMove(game, move);
-        return GameState.getGameState(game, move.getUserId());
+        return GameState.getGameState(
+                game, move.getUserId(),realUsers((TexasUser[]) game.getRoomUsers()));
     }
     
 //    @PostMapping(produces = {"application/JSON"})
