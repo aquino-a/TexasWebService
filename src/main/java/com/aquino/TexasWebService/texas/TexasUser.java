@@ -9,6 +9,7 @@ import com.aquino.TexasWebService.texas.cards.Card;
 import com.aquino.TexasWebService.texas.interfaces.Hand;
 import com.aquino.TexasWebService.texas.interfaces.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 
@@ -22,6 +23,7 @@ public class TexasUser implements User {
     public int betTotal;
     private int result, money,handStrength = -1, roundBet;
     private long userId;
+    @JsonProperty("username")
     private String name;
     private Hand hand;
     private boolean hasEnoughMoney, playing;

@@ -387,7 +387,7 @@ public class TexasGame implements CardGame {
     }
     
     @JsonIgnore
-    public User getUser(int userId) {
+    public User getUser(long userId) {
         return userList.get(userId);
     }
     
