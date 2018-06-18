@@ -62,6 +62,11 @@ public class TexasHand implements Hand {
     public int[] getCards() {
         int[] cards = new int[7];
         for (int i = 0; i < 7; i++) {
+            if(suits[i] == 0) {
+                cards[i] = 0;
+                continue;
+            }
+                
             cards[i] = ((suits[i]+1)*100) + ((faces[i]+1));
         }
         return cards;
