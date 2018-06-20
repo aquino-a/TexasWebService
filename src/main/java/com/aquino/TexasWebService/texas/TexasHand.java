@@ -16,10 +16,13 @@ import com.aquino.TexasWebService.texas.interfaces.Hand;
  */
 public class TexasHand implements Hand {
     
-    private int[] faces = new int[7];
-    private int[] suits = new int[7];
+    private int[] faces;
+    private int[] suits;
     int count;
 
+    public TexasHand() {
+        discardAll();
+    }
 
     @Override
     public void addCard(Card card) {
@@ -62,7 +65,7 @@ public class TexasHand implements Hand {
     public int[] getCards() {
         int[] cards = new int[7];
         for (int i = 0; i < 7; i++) {
-            if(suits[i] == 0) {
+            if(suits[i] == -1) {
                 cards[i] = 0;
                 continue;
             }
@@ -80,8 +83,8 @@ public class TexasHand implements Hand {
 
     @Override
     public void discardAll() {
-        faces = new int[7];
-        suits = new int[7];
+        faces = new int[]{-1,-1,-1,-1,-1,-1,-1};
+        suits = new int[]{-1,-1,-1,-1,-1,-1,-1};
         count = 0;
     }
 

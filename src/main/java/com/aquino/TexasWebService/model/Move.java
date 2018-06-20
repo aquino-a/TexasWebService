@@ -11,7 +11,7 @@ package com.aquino.TexasWebService.model;
  */
 public class Move {
     
-    private int userId;
+    private long userId;
     private int bet;
     private MoveType moveType;
     
@@ -22,7 +22,7 @@ public class Move {
     /**
      * @return the userId
      */
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
     
@@ -36,7 +36,7 @@ public class Move {
     /**
      * @param userId the userId to set
      */
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 

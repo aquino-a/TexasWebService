@@ -46,10 +46,14 @@ public class GameController {
     @PostMapping("/leave")
     public int leave(@PathVariable int id, Principal principal ) {
         User user = userService.getByUsername(principal.getName());
+        TexasGame game = gameMap.getGame(id);
         com.aquino.TexasWebService.texas.interfaces.User texasUser = 
-                gameMap.getGame(id).removeUser(user.getId());
+                game.removeUser(user.getId());
         user.setMoney(texasUser.getMoney());
         userService.save(user);
+        
+        if(game.getUserList().size() == 0)
+            gameMap.remove(id);
 
         return user.getMoney();
     }
@@ -65,13 +69,18 @@ public class GameController {
     private User[] realUsers(TexasUser[] users) {
         User[] actualUsers = new User[users.length];
         for (int i = 0; i < users.length; i++) {
-            actualUsers[i] = userService.findById(users[i].getUserId());
+            TexasUser user = users[i];
+            User actualUser = userService.findById(user.getUserId());
+            actualUser.setMoney(user.getMoney());
+            actualUsers[i] = actualUser;
         }
         return actualUsers;
     }
     
     @PostMapping("/move")
-    public GameState receiveMove(@RequestBody Move move, @PathVariable int id) {
+    public GameState receiveMove(@RequestBody Move move,
+            @PathVariable int id,Principal principal) {
+        move.setUserId(userService.getByUsername(principal.getName()).getId());
         TexasGame game = gameMap.getGame(id);
         processMove(game, move);
         return GameState.getGameState(

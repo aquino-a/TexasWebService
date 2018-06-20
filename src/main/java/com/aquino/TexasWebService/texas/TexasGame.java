@@ -66,8 +66,26 @@ public class TexasGame implements CardGame {
     
     @Override
     public User removeUser(long userId) {
-        foldUser(userList.get(userId));
-        return userList.remove(userId);
+        
+        User user = userList.get(userId);
+        
+        foldUser(user);
+        userCheck(user);
+        userList.remove(userId);
+        
+        return user;
+        
+    }
+    
+    private void userCheck(User user) {
+        if(userList.size() == 2 && !(state == GameState.NOROUND)) {
+            for (User u : userList.values()) {
+                if(user.getUserId() != u.getUserId())
+                    ((TexasUser)user).giveMoney(pot);
+                
+            }
+            endRound();
+        }
     }
 
     @Override
@@ -141,7 +159,7 @@ public class TexasGame implements CardGame {
             setNextUser();
     }
     
-    public void foldUser(int userId) {
+    public void foldUser(long userId) {
         foldUser(userList.get(userId));
     }
     
@@ -167,7 +185,7 @@ public class TexasGame implements CardGame {
         setNextUser();
     }
     
-    public void bet(int userId, int amount) {
+    public void bet(long userId, int amount) {
         bet(userList.get(userId), amount);
     }
     
