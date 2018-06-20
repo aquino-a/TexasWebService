@@ -340,6 +340,7 @@ public class TexasGame implements CardGame {
             user.setResult(user.getResult()+ user.getTotalBet());
         }
         System.out.println(winners.get(0));
+        endRound();
         return winners;
     }
 
