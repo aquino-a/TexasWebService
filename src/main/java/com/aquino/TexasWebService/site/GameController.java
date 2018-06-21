@@ -13,6 +13,7 @@ import com.aquino.TexasWebService.texas.TexasGame;
 import com.aquino.TexasWebService.texas.TexasUser;
 import java.security.Principal;
 import javax.inject.Inject;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,13 +35,16 @@ public class GameController {
     @Inject UserService userService;
     
     @PostMapping("/join")
-    public String join(@PathVariable long id, Principal principal) {
+    public ResponseEntity<String> join(@PathVariable long id, Principal principal) {
         User user = userService.getByUsername(principal.getName());
-        gameMap.getGame(id).addUser(
+        TexasGame game = gameMap.getGame(id);
+        if(game.getUserList().containsKey(user.getId()))
+            return ResponseEntity.badRequest().body(null);
+        game.addUser(
                 TexasUser.getInstanceFromKnownUser(
                         user.getMoney(),user.getId(),user.getUsername()));
-        
-        return "Your userId for this game is: " + user.getId();
+        return ResponseEntity.ok(
+                "Your userId for this game is: " + user.getId());
     }
     
     @PostMapping("/leave")
