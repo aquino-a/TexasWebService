@@ -56,7 +56,7 @@ public class GameController {
         user.setMoney(texasUser.getMoney());
         userService.save(user);
         
-        if(game.getUserList().size() == 0)
+        if(game.getUserList().isEmpty())
             gameMap.remove(id);
 
         return user.getMoney();
