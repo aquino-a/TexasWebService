@@ -17,6 +17,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -70,23 +73,24 @@ public class TexasGame implements CardGame {
         User user = userList.get(userId);
         
         foldUser(user);
-        userCheck(user);
+        //maybe redundant with new fold user logic
+        //userCheck(user);
         userList.remove(userId);
         
         return user;
         
     }
     
-    private void userCheck(User user) {
-        if(userList.size() == 2 && !(state == GameState.NOROUND)) {
-            for (User u : userList.values()) {
-                if(user.getUserId() != u.getUserId())
-                    ((TexasUser)user).giveMoney(pot);
-                
-            }
-            endRound();
-        }
-    }
+    //maybe redundant
+//    private void userCheck(User user) {
+//        if(userList.size() == 2) {
+//            for (User u : userList.values()) {
+//                if(user.getUserId() != u.getUserId())
+//                    ((TexasUser)user).giveMoney(pot);
+//            }
+//            endRound();
+//        }
+//    }
 
     @Override
     public Map<Long,User> getUserList() {
@@ -154,9 +158,33 @@ public class TexasGame implements CardGame {
     public void foldUser(User user) {
 //        if(!checkUser(user))
 //            throw new IllegalStateException("The user is incorrect it should be " + getTurn());
+        
         user.fold();
+        
+        if(checkOnePlayerLeft()) {
+            getLastPlayer().giveMoney(pot);
+            endRound();
+        }
+        
         if(checkUser(user))
             setNextUser();
+    }
+    
+    private TexasUser getLastPlayer() {
+        for (TexasUser user : users) {
+            if(user.isPlaying())
+                return user;
+        }
+        return null;
+    }
+    
+    private boolean checkOnePlayerLeft() {
+        int playingCount = 0;
+        for (TexasUser user : users) {
+            if(user.isPlaying())
+                playingCount++;
+        }
+        return playingCount < 2;
     }
     
     public void foldUser(long userId) {
@@ -229,10 +257,22 @@ public class TexasGame implements CardGame {
                 dealTurn();
             else if(state == GameState.RIVER)
                 dealRiver();
-            else if(state == GameState.ENDROUND)
+            else if(state == GameState.ENDROUND) {
                 roundWinner = calculateHands().get(0).getUserId();
+                waitForWinnerShow();
+                endRound();
+            }
         }
     }
+    
+    private void waitForWinnerShow() {
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(TexasGame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     //make private
     public void dealFlop() {
         
@@ -358,7 +398,7 @@ public class TexasGame implements CardGame {
             user.setResult(user.getResult()+ user.getTotalBet());
         }
         System.out.println(winners.get(0));
-        endRound();
+        
         return winners;
     }
 
