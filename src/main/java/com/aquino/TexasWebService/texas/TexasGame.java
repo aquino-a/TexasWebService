@@ -164,6 +164,11 @@ public class TexasGame implements CardGame {
         if(checkOnePlayerLeft()) {
             getLastPlayer().giveMoney(pot);
             endRound();
+            return;
+        }
+        else if(noOnePlaying()) {
+            endRound();
+            return;
         }
         
         if(checkUser(user))
@@ -178,13 +183,21 @@ public class TexasGame implements CardGame {
         return null;
     }
     
-    private boolean checkOnePlayerLeft() {
+    private boolean noOnePlaying() {
+        return players() == 0;
+    }
+    
+    private int players() {
         int playingCount = 0;
         for (TexasUser user : users) {
             if(user.isPlaying())
                 playingCount++;
         }
-        return playingCount < 2;
+        return playingCount;
+    }
+    
+    private boolean checkOnePlayerLeft() {
+        return players() == 1;
     }
     
     public void foldUser(long userId) {
@@ -267,7 +280,7 @@ public class TexasGame implements CardGame {
     
     private void waitForWinnerShow() {
         try {
-            TimeUnit.SECONDS.sleep(5);
+            TimeUnit.SECONDS.sleep(2);
         } catch (InterruptedException ex) {
             Logger.getLogger(TexasGame.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -452,12 +465,12 @@ public class TexasGame implements CardGame {
     
     @JsonIgnore
     public User[] getRoomUsers() {
-        return updatedUsers;
+        return userList.values().toArray(new TexasUser[0]);
     }
     
     @JsonIgnore
     public int getUserCount() {
-        return updatedUsers.length;
+        return userList.size();
     }
     
     @JsonIgnore

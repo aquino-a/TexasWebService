@@ -97,15 +97,17 @@ public class GameController {
 //    }
 
     private void processMove(TexasGame game , Move move) {
-        Move.MoveType type = move.getMoveType();
-        if(type == Move.MoveType.START)
-            game.newRound();
-        if(type == Move.MoveType.FOLD)
-            game.foldUser(move.getUserId());
-        if(type == Move.MoveType.BET)
-            game.bet(move.getUserId(), move.getBet());
-        if(type == Move.MoveType.END)
-            game.endRound();
+        new Thread(() -> {
+            Move.MoveType type = move.getMoveType();
+            if(type == Move.MoveType.START)
+                game.newRound();
+            if(type == Move.MoveType.FOLD)
+                game.foldUser(move.getUserId());
+            if(type == Move.MoveType.BET)
+                game.bet(move.getUserId(), move.getBet());
+            if(type == Move.MoveType.END)
+                game.endRound();
+        }).start();
     }
     
     
