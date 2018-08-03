@@ -14,4 +14,13 @@
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
+        <action>
+            <actionName>CUSTOM-build no test</actionName>
+            <displayName>build no test</displayName>
+            <goals>
+                <goal>clean</goal>
+                <goal>install</goal>
+                <goal>-Dmaven.test.skip=true</goal>
+            </goals>
+        </action>
     </actions>
