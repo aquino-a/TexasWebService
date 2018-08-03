@@ -13,7 +13,7 @@ import java.net.UnknownHostException;
 import javax.inject.Inject;
 import javax.mail.MessagingException;
 import javax.servlet.ServletContext;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,14 +23,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class TexasTokenService {
     
+    @Value("${texas.domain.path}")
+    String path;
+    
     @Inject
     private ServletContext servletContext;
-    
-    @Inject EmailService emailService;
-    @Inject TokenRepository tokenRepository;
-    
+
+    @Inject
+    EmailService emailService;
+    @Inject
+    TokenRepository tokenRepository;
+
     public User addAndSendVerification(User user) throws UnknownHostException, MessagingException {
-        VerificationToken token = new VerificationToken(user,VerificationToken.Type.VERIFICATION);
+        VerificationToken token = new VerificationToken(user, VerificationToken.Type.VERIFICATION);
         token = tokenRepository.save(token);
         user.setToken(token);
         //String verficationLink = servletContext.getContextPath() + "/confirm/" +user.getToken().getTokenValue();
@@ -39,7 +44,8 @@ public class TexasTokenService {
         sb.append(user.getUsername());
         sb.append("\n");
         sb.append("<a href=\"http://");
-        sb.append(InetAddress.getLocalHost().getHostAddress());
+//        sb.append(InetAddress.getLocalHost().getHostAddress());
+        sb.append(path);
         sb.append(servletContext.getContextPath());
         sb.append("/confirm/");
         sb.append(user.getToken().getTokenValue());
@@ -47,9 +53,9 @@ public class TexasTokenService {
         emailService.sendSimpleMessage(user.getEmail(), "Texas Hold'em Account Verification: " + user.getUsername(), sb.toString());
         return user;
     }
-    
+
     public User createAndSendReset(User user) throws UnknownHostException, MessagingException {
-        VerificationToken token = new VerificationToken(user,VerificationToken.Type.RESET);
+        VerificationToken token = new VerificationToken(user, VerificationToken.Type.RESET);
         token = tokenRepository.save(token);
         user.setToken(token);
         StringBuilder sb = new StringBuilder();
@@ -57,7 +63,8 @@ public class TexasTokenService {
         sb.append(user.getUsername());
         sb.append("\n");
         sb.append("<a href=\"http://");
-        sb.append(InetAddress.getLocalHost().getHostAddress());
+//        sb.append(InetAddress.getLocalHost().getHostAddress());
+        sb.append(path);
         sb.append(servletContext.getContextPath());
         sb.append("/reset/");
         sb.append(user.getToken().getTokenValue());
@@ -69,9 +76,9 @@ public class TexasTokenService {
     public VerificationToken findByTokenValue(String tokenId) {
         return tokenRepository.findByTokenValue(tokenId);
     }
-    
+
     public VerificationToken save(VerificationToken token) {
         return tokenRepository.save(token);
     }
-    
+
 }
