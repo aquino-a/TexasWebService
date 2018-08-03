@@ -5,11 +5,13 @@
  */
 package com.aquino.TexasWebService.service;
 
+import javax.mail.MessagingException;
+
 /**
  *
  * @author b005
  */
 interface EmailService {
     
-    public void sendSimpleMessage(String to, String subject,String contents);
+    public void sendSimpleMessage(String to, String subject,String contents) throws MessagingException;
 }
