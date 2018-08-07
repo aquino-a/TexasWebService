@@ -158,7 +158,8 @@ public class TexasGame implements CardGame {
     public void foldUser(User user) {
 //        if(!checkUser(user))
 //            throw new IllegalStateException("The user is incorrect it should be " + getTurn());
-        
+        if(state == GameState.NOROUND)
+            return;
         user.fold();
         
         if(checkOnePlayerLeft()) {
@@ -189,10 +190,14 @@ public class TexasGame implements CardGame {
     
     private int players() {
         int playingCount = 0;
-        for (TexasUser user : users) {
-            if(user.isPlaying())
-                playingCount++;
+        if(users != null) {
+            for (TexasUser user : users) {
+                if (user.isPlaying()) {
+                    playingCount++;
+                }
+            }
         }
+        
         return playingCount;
     }
     

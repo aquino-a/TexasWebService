@@ -45,6 +45,15 @@ public class GameState {
     
     public static GameState getGameState(TexasGame game, long userId, User[] users) {
         TexasUser user = (TexasUser) game.getUser(userId);
+        
+        if(user == null) {
+            return new GameState(userId, -1,
+                -1, users,
+                game.getTotalPot(), -1,
+                game.getMinimumBet(), null ,game.getState(),
+                game.getRoundWinner());
+        }
+        
         if(game.getState() == TexasGame.GameState.NOROUND ||
                 game.getState() == TexasGame.GameState.ENDROUND) {
             return new GameState(userId, -1,
