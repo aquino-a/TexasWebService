@@ -87,7 +87,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity security) throws Exception {
         security
-                .antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**","/users/**","/confirm/**","/favicon.ico","/reset/**").permitAll().anyRequest()
+                .antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**","/users/**","/confirm/**","/favicon.ico","/reset/**","/resources/**").permitAll().anyRequest()
                 .authenticated()
                 .and().exceptionHandling()
                 .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/")).and().logout()
